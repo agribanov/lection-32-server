@@ -1,7 +1,8 @@
 const model = require('./model');
 
 function getList(req, res){
-    model.getList()
+    const prom = model.getList();
+    prom
         .then(data => res.send(data))
         .catch(err => res.status(400).send(err));
 }
@@ -20,6 +21,7 @@ function update(req, res){
 
     console.log('got update request for one with id ' + id);
     model.update(id, req.body)
+        .then(() => model.getOne(id))
         .then(data => res.send(data))
         .catch(err => res.status(400).send(err));
 }
