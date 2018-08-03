@@ -1,47 +1,22 @@
 const mock = require('./mock');
 const syncPromise = require('../utils').syncPromise;
-const getConnection = require('../db');
 
 function getList(){
-
-    return new Promise((resolve, reject) => {
-        const connection = getConnection();
-        connection.connect();
-        connection.query('SELECT * FROM students', (err, result)=>{
-            err ? reject(err) : resolve(result);
-        });
-        connection.end();
-    });
+    return syncPromise(mock);
 }
 
 function getOne(id){
-    return new Promise((resolve, reject) => {
-        const connection = getConnection();
-        connection.connect();
-        connection.query('SELECT * FROM students WHERE id = ?', id, (err, result)=>{
-            if (!err) {
-                result.length ? resolve(result[0]) : resolve(null)
-            } else {
-                reject(err);
-            }
-        });
-        connection.end();
-    });
+    const item = mock.find(item => item.id == id);
+
+    return syncPromise(item);
 }
 
 function update(id, data){
-    return new Promise((resolve, reject) => {
-        const connection = getConnection();
-        connection.connect();
-        connection.query("UPDATE students  SET ? WHERE id = ?",[data, id], (err, result) => {
-            if (!err) {
-                err ? reject(err) : resolve(result);
-            } else {
-                reject(err)
-            }
-        });
-        connection.end();
-    });
+    const index = mock.findIndex(item => item.id == id);
+
+    mock[index] = data;
+
+    return syncPromise(data)
 }
 
 function create(data){
